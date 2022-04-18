@@ -36,9 +36,25 @@ const store = new Vuex.Store ( {
 		],
 		//次に追加するタスク、ラベルのID
 		//実際のアプリではサーバーで生成したり、UUID を使ったりするがここでは決め打ち
+		nextTaskId: 3,
 		nextLabelId: 4,
+		//フィルタするラベルの ID
+		filter: null
+	},
+	getters: {
+		//フィルタ後のタスクを返す
+		filterTasks( state ) {
+			//ラベルが選択されていなければそのままの一覧を返す
+			if( ! state.filter ) {
+				return state.stasks
+			}
+			return state.tasks.filter( task => {
+				return task.labelIds.indexOf( state.filter ) >= 0
+			} )
+		}
 	},
 	mutations: {
+		//タスクを追加する
 		addTask( state, { name, labelIds } ) {
 			state.tasks.push( {
 				id: state.nextTaskId,
@@ -67,6 +83,9 @@ const store = new Vuex.Store ( {
 			//次に追加されるラベルに付与する ID を更新
 			state.nextLabelId++
 		},
+		changeFilter( state, { filter } ) {
+			state.filter = filter
+		}
 	},
 } )
 
